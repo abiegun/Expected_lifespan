@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Expected lifespan</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="topbar">
+    <h1 data-i18n="title">Expected lifespan</h1>
+    <div class="lang" role="group" aria-label="Language">
+      <button type="button" data-lang="en">EN</button>
+      <button type="button" data-lang="pl">PL</button>
+    </div>
+  </header>
+
+  <main>
+    <!-- Input panel -->
+    <section id="form-panel" class="panel">
+      <form id="form" novalidate>
+        <label>
+          <span data-i18n="country">Country</span>
+          <select id="country" required>
+            <option value="" data-i18n="loadingCountries">Loading countries…</option>
+          </select>
+        </label>
+
+        <label>
+          <span data-i18n="birthDate">Date of birth</span>
+          <input id="birthDate" type="date" required>
+        </label>
+
+        <fieldset>
+          <legend data-i18n="sex">Sex</legend>
+          <div class="choices">
+            <label><input type="radio" name="sex" value="male"> <span data-i18n="male">Male</span></label>
+            <label><input type="radio" name="sex" value="female"> <span data-i18n="female">Female</span></label>
+            <label><input type="radio" name="sex" value="" checked> <span data-i18n="notSpecified">Not specified</span></label>
+          </div>
+        </fieldset>
+
+        <button id="submit" type="submit" class="primary" data-i18n="calculate">Calculate</button>
+        <p id="form-error" class="error" role="alert" hidden></p>
+      </form>
+    </section>
+
+    <!-- Countdown view: timer panel (top) + details panel (bottom of the window) -->
+    <div id="timer-panel" class="timer-view" hidden>
+      <fieldset class="timer-card">
+        <legend data-i18n="remaining">Expected remaining time</legend>
+        <p id="timer" class="timer" aria-live="off">
+          <span class="part"><span id="t-years" class="num">0</span> <span id="t-years-word" class="word"></span></span>
+          <span class="part"><span id="t-days" class="num">0</span> <span id="t-days-word" class="word"></span></span>
+          <span id="t-time" class="clock">00:00:00</span>
+        </p>
+      </fieldset>
+
+      <section class="panel details-panel">
+      <dl class="details">
+        <div><dt data-i18n="country">Country</dt><dd id="d-country"></dd></div>
+        <div><dt data-i18n="sex">Sex</dt><dd id="d-sex"></dd></div>
+        <div><dt data-i18n="birthDate">Date of birth</dt><dd id="d-birth"></dd></div>
+        <div><dt data-i18n="expectedDate">Expected date</dt><dd id="d-end"></dd></div>
+      </dl>
+
+      <!-- Survey result (computed on this device) -->
+      <div id="survey-summary" class="survey-summary">
+        <p id="survey-effect" class="survey-effect" hidden></p>
+        <p id="survey-range" class="survey-range" hidden></p>
+        <details id="survey-breakdown" hidden>
+          <summary data-i18n="breakdownTitle">How your answers change the result</summary>
+          <ul id="survey-breakdown-list"></ul>
+        </details>
+        <p id="survey-hint" class="muted" data-i18n="surveyHint">Answer 5 short questions to personalise the estimate.</p>
+      </div>
+
+      <p id="timer-error" class="error" role="alert" hidden></p>
+      <div class="actions">
+        <button id="open-survey" type="button" class="primary">Short survey</button>
+        <button id="change" type="button" data-i18n="change">Change</button>
+      </div>
+      <p id="note" class="note"></p>
+      <p id="approx-note" class="note" data-i18n="approxNote" hidden></p>
+      </section>
+    </div>
+
+    <!-- Short survey: answers are processed only on this device -->
+    <section id="survey-panel" class="panel" hidden>
+      <h2 data-i18n="surveyTitle">Short survey (optional)</h2>
+
+      <div class="notice" role="note">
+        <p><strong data-i18n="noticeTitle">Your answers stay on this device.</strong>
+          <span data-i18n="noticeBody"></span></p>
+        <details>
+          <summary data-i18n="privacyMore">More about privacy</summary>
+          <p data-i18n="privacyDetails"></p>
+        </details>
+      </div>
+
+      <form id="survey-form" novalidate>
+        <fieldset class="q" id="q-smoking">
+          <legend data-i18n="qSmoking">Do you smoke cigarettes or other tobacco?</legend>
+          <div class="options">
+            <label><input type="radio" name="smoking" value="never"> <span data-i18n="smokeNever">Never smoked</span></label>
+            <label class="inline-input"><input type="radio" name="smoking" value="former"> <span data-i18n="smokeFormer">Used to – quit at age</span>
+              <input id="quitAge" type="number" min="5" max="120" inputmode="numeric" class="num" aria-labelledby="q-smoking"></label>
+            <label><input type="radio" name="smoking" value="current"> <span data-i18n="smokeCurrent">Smoke now</span></label>
+            <label><input type="radio" name="smoking" value="" checked> <span data-i18n="preferNot">Prefer not to say</span></label>
+          </div>
+        </fieldset>
+
+        <fieldset class="q" id="q-body">
+          <legend data-i18n="qBody">Height and weight</legend>
+          <div class="row">
+            <label><span data-i18n="heightCm">Height (cm)</span> <input id="heightCm" type="number" min="100" max="250" inputmode="numeric" class="num"></label>
+            <label><span data-i18n="weightKg">Weight (kg)</span> <input id="weightKg" type="number" min="25" max="350" step="0.1" inputmode="decimal" class="num"></label>
+            <span id="bmi-value" class="muted"></span>
+          </div>
+          <p class="hint" data-i18n="bodyHint">Leave empty to skip.</p>
+        </fieldset>
+
+        <fieldset class="q" id="q-activity">
+          <legend data-i18n="qActivity">Exercise per week</legend>
+          <p class="hint" data-i18n="activityHint"></p>
+          <div class="options">
+            <label><input type="radio" name="activity" value="none"> <span data-i18n="actNone">None</span></label>
+            <label><input type="radio" name="activity" value="low"> <span data-i18n="actLow">Less than 150 min</span></label>
+            <label><input type="radio" name="activity" value="guideline"> <span data-i18n="actGuideline">150–299 min</span></label>
+            <label><input type="radio" name="activity" value="double"> <span data-i18n="actDouble">300–449 min</span></label>
+            <label><input type="radio" name="activity" value="high"> <span data-i18n="actHigh">450 min or more</span></label>
+            <label><input type="radio" name="activity" value="" checked> <span data-i18n="preferNot">Prefer not to say</span></label>
+          </div>
+        </fieldset>
+
+        <fieldset class="q" id="q-alcohol">
+          <legend data-i18n="qAlcohol">Alcoholic drinks per week</legend>
+          <p class="hint" data-i18n="alcoholHint"></p>
+          <div class="options">
+            <label><input type="radio" name="alcohol" value="none"> <span data-i18n="alcNone">None</span></label>
+            <label><input type="radio" name="alcohol" value="light"> <span data-i18n="alcLight">1–10</span></label>
+            <label><input type="radio" name="alcohol" value="moderate"> <span data-i18n="alcModerate">11–20</span></label>
+            <label><input type="radio" name="alcohol" value="heavy"> <span data-i18n="alcHeavy">21–35</span></label>
+            <label><input type="radio" name="alcohol" value="veryHeavy"> <span data-i18n="alcVeryHeavy">More than 35</span></label>
+            <label><input type="radio" name="alcohol" value="" checked> <span data-i18n="preferNot">Prefer not to say</span></label>
+          </div>
+        </fieldset>
+
+        <fieldset class="q" id="q-parents">
+          <legend data-i18n="qParents">Your parents</legend>
+          <p class="hint" data-i18n="parentsHint"></p>
+          <div class="parent" id="q-mother">
+            <span class="parent-name" data-i18n="mother">Mother</span>
+            <select id="motherStatus" aria-labelledby="q-mother">
+              <option value="" data-i18n="parentUnknown">Don't know / prefer not to say</option>
+              <option value="alive" data-i18n="parentAlive">Alive, aged</option>
+              <option value="dead" data-i18n="parentDead">Died at age</option>
+            </select>
+            <input id="motherAge" type="number" min="15" max="120" inputmode="numeric" class="num" aria-labelledby="q-mother">
+          </div>
+          <div class="parent" id="q-father">
+            <span class="parent-name" data-i18n="father">Father</span>
+            <select id="fatherStatus" aria-labelledby="q-father">
+              <option value="" data-i18n="parentUnknown">Don't know / prefer not to say</option>
+              <option value="alive" data-i18n="parentAlive">Alive, aged</option>
+              <option value="dead" data-i18n="parentDead">Died at age</option>
+            </select>
+            <input id="fatherAge" type="number" min="15" max="120" inputmode="numeric" class="num" aria-labelledby="q-father">
+          </div>
+        </fieldset>
+
+        <label class="remember"><input id="remember" type="checkbox" checked> <span data-i18n="remember">Remember my answers on this device</span></label>
+
+        <p id="survey-error" class="error" role="alert" hidden></p>
+        <div class="actions">
+          <button id="survey-apply" type="submit" class="primary" data-i18n="apply">Apply</button>
+          <button id="survey-clear" type="button" data-i18n="clearAnswers">Clear answers</button>
+          <button id="survey-cancel" type="button" data-i18n="cancel">Cancel</button>
+        </div>
+      </form>
+    </section>
+  </main>
+
+  <script src="risk.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

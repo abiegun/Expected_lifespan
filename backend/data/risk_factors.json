@@ -1,0 +1,169 @@
+{
+  "version": "2026-11-17.1",
+  "description": "Survey risk factors. Public data: effect sizes and rules only. Answers are evaluated on the user's device (web/risk.js, Android port); only hr65/hr85 are sent to the backend. See project doc claude/survey-risk-factors.md.",
+  "ageProfile": {
+    "fullUntil": 65,
+    "oldFrom": 85
+  },
+  "limits": {
+    "minHr": 0.4,
+    "maxHr": 6.0,
+    "roundTo": 0.01
+  },
+  "rangeScale": [
+    0.75,
+    1.25
+  ],
+  "groupWeights": {
+    "lifestyle": 1.0,
+    "proxy": 0.5
+  },
+  "factors": {
+    "smoking": {
+      "group": "lifestyle",
+      "oldRatio": 0.7,
+      "hrCurrent": {
+        "male": 2.8,
+        "female": 3.0,
+        "both": 2.9
+      },
+      "formerExcessByQuitAge": [
+        [
+          0,
+          0.03
+        ],
+        [
+          30,
+          0.03
+        ],
+        [
+          40,
+          0.08
+        ],
+        [
+          50,
+          0.2
+        ],
+        [
+          60,
+          0.4
+        ],
+        [
+          70,
+          0.6
+        ]
+      ],
+      "assumedFormerShareOfCurrent": 0.6,
+      "assumedFormerExcess": 0.3,
+      "sources": [
+        "Jha 2013 NEJM",
+        "Pirie 2013 Lancet",
+        "Doll 2004 BMJ"
+      ]
+    },
+    "bmi": {
+      "group": "lifestyle",
+      "oldRatio": 0.6,
+      "refLow": 22.5,
+      "refHigh": 25.0,
+      "hrPer5Above": 1.29,
+      "lowSlopePerUnit": 0.04,
+      "minBmi": 12,
+      "maxBmi": 70,
+      "assumedBmi": {
+        "normal": 23.0,
+        "overweight": 27.5,
+        "obese": 33.5
+      },
+      "sources": [
+        "Prospective Studies Collaboration 2009 Lancet"
+      ]
+    },
+    "activity": {
+      "group": "lifestyle",
+      "oldRatio": 0.8,
+      "levels": {
+        "none": 1.0,
+        "low": 0.8,
+        "guideline": 0.69,
+        "double": 0.63,
+        "high": 0.61
+      },
+      "assumedSplit": {
+        "insufficient": {
+          "none": 0.4,
+          "low": 0.6
+        },
+        "sufficient": {
+          "guideline": 0.5,
+          "double": 0.3,
+          "high": 0.2
+        }
+      },
+      "sources": [
+        "Arem 2015 JAMA Intern Med",
+        "Moore 2012 PLoS Med"
+      ]
+    },
+    "alcohol": {
+      "group": "lifestyle",
+      "oldRatio": 0.6,
+      "levels": {
+        "none": 1.0,
+        "light": 1.0,
+        "moderate": 1.06,
+        "heavy": 1.18,
+        "veryHeavy": 1.68
+      },
+      "gramsPerWeekBounds": {
+        "light": 100,
+        "moderate": 200,
+        "heavy": 350
+      },
+      "gramsPerLitre": 789,
+      "sources": [
+        "Wood 2018 Lancet"
+      ]
+    },
+    "parents": {
+      "group": "proxy",
+      "oldRatio": 0.6,
+      "hrPerDecade": {
+        "mother": 0.84,
+        "father": 0.83
+      },
+      "referenceAge": 80,
+      "minAgeCounted": 70,
+      "sources": [
+        "Atkins, Pilling 2016 JACC"
+      ]
+    }
+  },
+  "defaultPrevalence": {
+    "note": "Approximate European values, used when WHO data for the country is missing.",
+    "male": {
+      "smoking_current": 0.28,
+      "overweight": 0.62,
+      "obesity": 0.24,
+      "insufficient_activity": 0.3,
+      "alcohol_litres": 15.0,
+      "alcohol_abstainers": 0.15
+    },
+    "female": {
+      "smoking_current": 0.2,
+      "overweight": 0.5,
+      "obesity": 0.23,
+      "insufficient_activity": 0.38,
+      "alcohol_litres": 5.0,
+      "alcohol_abstainers": 0.3
+    },
+    "both": {
+      "smoking_current": 0.24,
+      "overweight": 0.56,
+      "obesity": 0.235,
+      "insufficient_activity": 0.34,
+      "alcohol_litres": 9.8,
+      "alcohol_abstainers": 0.22
+    }
+  }
+}

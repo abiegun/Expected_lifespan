@@ -1,0 +1,215 @@
+:root {
+  --bg: #0f1115;
+  --panel: #171a21;
+  --line: #2a2f3a;
+  --text: #e8e9ec;
+  --muted: #9aa0ab;
+  --accent: #e0b04f;
+  --error: #ff7b72;
+  --radius: 14px;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+  color: var(--text);
+  font: 16px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+.topbar {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 1.25rem 1.25rem 0;
+}
+
+h1 {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 600;
+  letter-spacing: .02em;
+}
+
+.lang { display: flex; border: 1px solid var(--line); border-radius: 999px; overflow: hidden; }
+.lang button {
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  padding: .35rem .8rem;
+  font: inherit;
+  font-size: .85rem;
+  cursor: pointer;
+}
+.lang button.active { background: var(--accent); color: #111; font-weight: 600; }
+
+main {
+  width: 100%;
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 1.25rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+}
+
+form { display: grid; gap: 1.1rem; }
+
+label > span, legend { display: block; margin-bottom: .35rem; color: var(--muted); font-size: .9rem; }
+
+select, input[type="date"] {
+  width: 100%;
+  padding: .65rem .75rem;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--bg);
+  color: var(--text);
+  font: inherit;
+}
+select:focus, input:focus, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+
+fieldset { border: 0; margin: 0; padding: 0; }
+.choices { display: flex; flex-wrap: wrap; gap: .5rem 1.25rem; }
+.choices label { display: flex; align-items: center; gap: .4rem; cursor: pointer; }
+.choices input { accent-color: var(--accent); }
+
+button {
+  padding: .7rem 1.2rem;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  cursor: pointer;
+}
+button.primary { background: var(--accent); border-color: var(--accent); color: #111; font-weight: 600; }
+button:disabled { opacity: .6; cursor: wait; }
+
+.error { margin: 0; color: var(--error); }
+
+
+.timer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: baseline;
+  gap: .3em .7em;
+  margin: 0 0 1.75rem;
+  font-size: clamp(1.8rem, 6.5vw, 3.4rem);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.2;
+}
+.timer .word { font-size: .5em; font-weight: 400; color: var(--muted); }
+.timer .clock { color: var(--accent); font-family: ui-monospace, "SFMono-Regular", Consolas, monospace; }
+
+.details {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: .9rem;
+  margin: 0 0 1.5rem;
+}
+.details dt { color: var(--muted); font-size: .85rem; }
+.details dd { margin: 0; }
+
+#change { display: block; margin: 0 auto; }
+
+.note { margin: 1.5rem 0 0; color: var(--muted); font-size: .85rem; text-align: center; }
+
+/* Actions row */
+.actions { display: flex; flex-wrap: wrap; justify-content: center; gap: .6rem; margin-top: 1rem; }
+#timer-panel #change { margin: 0; }
+
+/* Countdown view: timer at the top, details pushed to the bottom of the window */
+.timer-view {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;             /* same as main's top padding, so the centring is exact */
+}
+.timer-card {
+  margin: auto 0;           /* centred between the header and the details panel */
+  padding: 1.75rem 1.5rem 2rem;
+  border: 1px solid var(--accent);
+  border-radius: var(--radius);
+  background: var(--panel);
+  min-width: 0;
+}
+.timer-card legend {
+  margin: 0 auto;           /* centred on the top border */
+  padding: 0 .75rem;
+  color: var(--muted);
+  font-size: .95rem;
+  letter-spacing: .02em;
+}
+.timer-card .timer { margin: 0; }
+.details-panel {
+  background: transparent;
+  font-size: .95rem;
+}
+
+/* Survey summary under the countdown */
+.survey-summary { text-align: center; margin: 0 0 .5rem; }
+.survey-effect { margin: 0 0 .25rem; font-weight: 600; }
+.survey-range { margin: 0 0 .5rem; color: var(--muted); }
+.survey-summary details { display: inline-block; text-align: left; margin-top: .25rem; }
+.survey-summary summary { cursor: pointer; color: var(--accent); }
+.survey-summary ul { margin: .5rem 0 0; padding-left: 1.2rem; }
+.muted { color: var(--muted); }
+
+/* Survey panel */
+#survey-panel h2 { margin: 0 0 1rem; font-size: 1.1rem; }
+.notice {
+  border: 1px solid var(--accent);
+  border-radius: 10px;
+  background: rgba(224, 176, 79, .08);
+  padding: .8rem 1rem;
+  margin-bottom: 1.25rem;
+  font-size: .92rem;
+}
+.notice p { margin: 0; }
+.notice details { margin-top: .5rem; }
+.notice summary { cursor: pointer; color: var(--accent); }
+.notice details p { margin-top: .4rem; color: var(--muted); }
+
+#survey-form { gap: 1.25rem; }
+.q { border-top: 1px solid var(--line); padding-top: 1rem; }
+.q legend { color: var(--text); font-size: 1rem; font-weight: 600; margin-bottom: .5rem; padding: 0; }
+.q .hint { margin: 0 0 .5rem; color: var(--muted); font-size: .85rem; }
+.options { display: grid; gap: .45rem; }
+.options label, .remember { display: flex; align-items: center; gap: .5rem; cursor: pointer; }
+.options input[type="radio"], .remember input { accent-color: var(--accent); }
+.row { display: flex; flex-wrap: wrap; align-items: end; gap: .75rem 1.25rem; }
+.row label > span { display: block; margin-bottom: .3rem; color: var(--muted); font-size: .85rem; }
+input.num {
+  width: 6.5rem;
+  padding: .45rem .6rem;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--bg);
+  color: var(--text);
+  font: inherit;
+}
+.inline-input input.num { width: 5rem; }
+.parent { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem .75rem; margin-bottom: .6rem; }
+.parent-name { min-width: 4.5rem; }
+.parent select { width: auto; min-width: 12rem; padding: .45rem .6rem; }
+[aria-invalid="true"] { border-color: var(--error) !important; outline: 1px solid var(--error); }
+
+[hidden] { display: none !important; }
