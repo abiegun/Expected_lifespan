@@ -73,7 +73,7 @@ form { display: grid; gap: 1.1rem; }
 
 label > span, legend { display: block; margin-bottom: .35rem; color: var(--muted); font-size: .9rem; }
 
-select, input[type="date"] {
+select, input[type="date"], .date-parts input {
   width: 100%;
   padding: .65rem .75rem;
   border: 1px solid var(--line);
@@ -85,6 +85,20 @@ select, input[type="date"] {
 select:focus, input:focus, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
 
 fieldset { border: 0; margin: 0; padding: 0; }
+
+/* Birth date: day / month / year */
+.date-parts { display: grid; grid-template-columns: 5rem 1fr 6.5rem; gap: .6rem; }
+.date-parts label > span { font-size: .8rem; }
+.date-parts input { text-align: center; }
+@media (max-width: 480px) {
+  .date-parts { grid-template-columns: 3.4rem 1fr 4.6rem; gap: .45rem; }
+  .date-parts select, .date-parts input { padding-left: .4rem; padding-right: .4rem; }
+}
+@media (max-width: 360px) {
+  /* Very narrow phones: day + month on the first line, year below. */
+  .date-parts { grid-template-columns: 3.4rem 1fr; }
+  .date-year { grid-column: 1 / -1; max-width: 6rem; }
+}
 .choices { display: flex; flex-wrap: wrap; gap: .5rem 1.25rem; }
 .choices label { display: flex; align-items: center; gap: .4rem; cursor: pointer; }
 .choices input { accent-color: var(--accent); }
@@ -210,6 +224,30 @@ input.num {
 .parent { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem .75rem; margin-bottom: .6rem; }
 .parent-name { min-width: 4.5rem; }
 .parent select { width: auto; min-width: 12rem; padding: .45rem .6rem; }
+/* Extended survey */
+.more { border-top: 1px solid var(--line); padding-top: 1rem; }
+.more > summary { cursor: pointer; color: var(--accent); font-weight: 600; }
+.more .hint { margin: .5rem 0 0; color: var(--muted); font-size: .85rem; }
+.reminder {
+  margin: .75rem 0 0;
+  padding: .5rem .75rem;
+  border-left: 3px solid var(--accent);
+  background: rgba(224, 176, 79, .06);
+  font-size: .85rem;
+  color: var(--muted);
+}
+#extended-questions { display: grid; gap: 1.1rem; margin-top: 1rem; }
+.xq label.sel { display: grid; gap: .35rem; }
+.xq label.sel > span { color: var(--text); font-weight: 600; font-size: .95rem; }
+.xq select { max-width: 100%; }
+.xq .sub { display: grid; gap: .6rem; margin-top: .4rem; }
+.xq .sub label > span { color: var(--muted); font-size: .85rem; }
+.xq .checks { display: grid; gap: .4rem; margin-top: .5rem; }
+.xq .checks label { display: flex; gap: .5rem; align-items: flex-start; cursor: pointer; }
+.xq .checks input { accent-color: var(--accent); margin-top: .25rem; }
+.xq .support { margin: .5rem 0 0; font-size: .85rem; color: var(--muted); }
+.xq .q-title { color: var(--text); font-weight: 600; font-size: .95rem; margin: 0 0 .35rem; }
+
 [aria-invalid="true"] { border-color: var(--error) !important; outline: 1px solid var(--error); }
 
 [hidden] { display: none !important; }

@@ -3,6 +3,15 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script>
+    // Force HTTPS: reload over https:// before anything else loads.
+    // Local testing (localhost, 127.0.0.1, files opened from disk) is left alone.
+    (function (l) {
+      if (l.protocol === "http:" && !/^(localhost|127\.0\.0\.1|\[::1\])$/.test(l.hostname)) {
+        l.replace("https://" + l.host + l.pathname + l.search + l.hash);
+      }
+    })(window.location);
+  </script>
   <title>Expected lifespan</title>
   <link rel="stylesheet" href="style.css">
 </head>
@@ -26,10 +35,18 @@
           </select>
         </label>
 
-        <label>
-          <span data-i18n="birthDate">Date of birth</span>
-          <input id="birthDate" type="date" required>
-        </label>
+        <!-- Day / month / year: shown in the page language, not the browser's -->
+        <fieldset id="birth-field">
+          <legend data-i18n="birthDate">Date of birth</legend>
+          <div class="date-parts">
+            <label class="date-day"><span data-i18n="day">Day</span>
+              <input id="birthDay" type="text" inputmode="numeric" maxlength="2" autocomplete="bday-day"></label>
+            <label class="date-month"><span data-i18n="month">Month</span>
+              <select id="birthMonth" autocomplete="bday-month"></select></label>
+            <label class="date-year"><span data-i18n="year">Year</span>
+              <input id="birthYear" type="text" inputmode="numeric" maxlength="4" autocomplete="bday-year"></label>
+          </div>
+        </fieldset>
 
         <fieldset>
           <legend data-i18n="sex">Sex</legend>
@@ -168,6 +185,14 @@
             <input id="fatherAge" type="number" min="15" max="120" inputmode="numeric" class="num" aria-labelledby="q-father">
           </div>
         </fieldset>
+
+        <!-- Optional extension: more factors, ordered by how much they can change the result -->
+        <details id="survey-more" class="more">
+          <summary data-i18n="moreQuestions">More questions (optional)</summary>
+          <p class="hint" data-i18n="moreHint"></p>
+          <p class="reminder" data-i18n="sectionReminder"></p>
+          <div id="extended-questions"></div>
+        </details>
 
         <label class="remember"><input id="remember" type="checkbox" checked> <span data-i18n="remember">Remember my answers on this device</span></label>
 

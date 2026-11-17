@@ -20,6 +20,10 @@ const TEXT = {
     chooseCountry: "Choose a country…",
     loadingCountries: "Loading countries…",
     birthDate: "Date of birth",
+    day: "Day",
+    month: "Month",
+    year: "Year",
+    chooseMonth: "—",
     sex: "Sex",
     male: "Male",
     female: "Female",
@@ -85,7 +89,83 @@ const TEXT = {
     clearAnswers: "Clear answers",
     errSurvey: "Please check the highlighted answers.",
     breakdownTitle: "How your answers change the result",
-    factorNames: { smoking: "Smoking", bmi: "Body weight (BMI)", activity: "Physical activity", alcohol: "Alcohol", parents: "Parents" },
+    factorNames: {
+      smoking: "Smoking", bmi: "Body weight (BMI)", activity: "Physical activity", alcohol: "Alcohol", parents: "Parents",
+      stroke: "Stroke", heartAttack: "Heart attack", diabetes: "Diabetes", bloodPressure: "Blood pressure",
+      mental: "Mental health", diet: "Diet", income: "Income", social: "Living situation and contacts",
+      sitting: "Sitting", sleep: "Sleep", education: "Education", air: "Place of residence (air quality)",
+    },
+    // Extended survey
+    moreQuestions: "More questions (optional)",
+    moreHint: "Ordered by how much each answer can change the result. Skip anything you like.",
+    sectionReminder: "These answers also stay on your device. All questions here are optional.",
+    yes: "Yes",
+    no: "No",
+    dontKnow: "Don't know / prefer not to say",
+    qStroke: "Have you had a stroke?",
+    qHeartAttack: "Have you had a heart attack?",
+    qDiabetes: "Have you been diagnosed with diabetes?",
+    qBloodPressure: "Blood pressure",
+    bpNormal: "Normal",
+    bpControlled: "High – treated and under control",
+    bpUncontrolled: "High – treated, but not under control",
+    bpUntreated: "High – not treated",
+    qMental: "Have you been treated for depression or another mental health condition?",
+    mentalNo: "No",
+    mentalPast: "Yes, in the past",
+    mentalCurrent: "Yes, currently",
+    mentalSupport: "If you're going through a hard time, talking to a doctor or someone you trust can help. In Poland: 116 123 (emotional support for adults) or 800 70 2222 (crisis support, 24/7); in an emergency call 112. Other countries: findahelpline.com.",
+    qDiet: "Diet",
+    dietMode: "Tick what applies to you in most weeks",
+    dietFill: "Fill in the checklist",
+    dietItems: [
+      "Vegetables every day",
+      "Fruit every day",
+      "Legumes (beans, lentils, peas) at least twice a week",
+      "Fish at least twice a week",
+      "Mostly wholegrain bread, pasta or cereals",
+      "Nuts or seeds at least 3 times a week",
+      "Olive or rapeseed oil as the main fat",
+      "Red or processed meat at most a few times a week",
+      "Sweets and sugary drinks rarely",
+    ],
+    qIncome: "Household income compared with the average in your country",
+    incMuchLower: "Much lower",
+    incLower: "Somewhat lower",
+    incAverage: "About average",
+    incHigher: "Somewhat higher",
+    incMuchHigher: "Much higher",
+    qSocial: "Living situation and contacts",
+    qLivingAlone: "Do you live alone?",
+    qContact: "How often do you meet or talk with friends or family?",
+    contactDaily: "Every day",
+    contactWeekly: "Every week",
+    contactMonthly: "Every month",
+    contactRarely: "Less often",
+    qLonely: "How often do you feel lonely?",
+    lonelyNever: "Never or rarely",
+    lonelySometimes: "Sometimes",
+    lonelyOften: "Often",
+    qSitting: "Hours sitting per day (work, TV, travel)",
+    sitLt4: "Less than 4",
+    sit4to6: "4–6",
+    sit6to8: "6–8",
+    sitGt8: "More than 8",
+    qSleep: "Usual sleep per night",
+    sleepLe5: "5 hours or less",
+    sleepSix: "About 6 hours",
+    sleepSevenEight: "7–8 hours",
+    sleepNinePlus: "9 hours or more",
+    qEducation: "Highest completed education",
+    eduPrimary: "Primary",
+    eduVocational: "Vocational",
+    eduSecondary: "Secondary",
+    eduBachelor: "Bachelor's or engineer's degree",
+    eduMaster: "Master's degree or higher",
+    qAir: "Where do you live?",
+    airCity: "Large city",
+    airTown: "Smaller town",
+    airCountryside: "Countryside",
     yearsDecimal: () => "years",
     surveyEffect: (v) => `Survey: ${v} years compared with the national average`,
     rangeYears: (a, b) => (a === b ? `Most likely in ${a}` : `Most likely between ${a} and ${b}`),
@@ -98,6 +178,10 @@ const TEXT = {
     chooseCountry: "Wybierz kraj…",
     loadingCountries: "Wczytywanie krajów…",
     birthDate: "Data urodzenia",
+    day: "Dzień",
+    month: "Miesiąc",
+    year: "Rok",
+    chooseMonth: "—",
     sex: "Płeć",
     male: "Mężczyzna",
     female: "Kobieta",
@@ -163,7 +247,83 @@ const TEXT = {
     clearAnswers: "Wyczyść odpowiedzi",
     errSurvey: "Sprawdź zaznaczone odpowiedzi.",
     breakdownTitle: "Jak Twoje odpowiedzi zmieniają wynik",
-    factorNames: { smoking: "Palenie", bmi: "Masa ciała (BMI)", activity: "Aktywność fizyczna", alcohol: "Alkohol", parents: "Rodzice" },
+    factorNames: {
+      smoking: "Palenie", bmi: "Masa ciała (BMI)", activity: "Aktywność fizyczna", alcohol: "Alkohol", parents: "Rodzice",
+      stroke: "Udar", heartAttack: "Zawał serca", diabetes: "Cukrzyca", bloodPressure: "Ciśnienie tętnicze",
+      mental: "Zdrowie psychiczne", diet: "Sposób odżywiania", income: "Dochód", social: "Sytuacja życiowa i kontakty",
+      sitting: "Siedzenie", sleep: "Sen", education: "Wykształcenie", air: "Miejsce zamieszkania (jakość powietrza)",
+    },
+    // Rozszerzona ankieta
+    moreQuestions: "Więcej pytań (opcjonalnie)",
+    moreHint: "Kolejność według tego, jak bardzo każda odpowiedź może zmienić wynik. Możesz pominąć dowolne pytanie.",
+    sectionReminder: "Te odpowiedzi również pozostają na Twoim urządzeniu. Wszystkie pytania są tu opcjonalne.",
+    yes: "Tak",
+    no: "Nie",
+    dontKnow: "Nie wiem / wolę nie odpowiadać",
+    qStroke: "Czy przebyłeś(-aś) udar mózgu?",
+    qHeartAttack: "Czy przebyłeś(-aś) zawał serca?",
+    qDiabetes: "Czy zdiagnozowano u Ciebie cukrzycę?",
+    qBloodPressure: "Ciśnienie tętnicze",
+    bpNormal: "Prawidłowe",
+    bpControlled: "Wysokie – leczone i pod kontrolą",
+    bpUncontrolled: "Wysokie – leczone, ale nie pod kontrolą",
+    bpUntreated: "Wysokie – nieleczone",
+    qMental: "Czy leczyłeś(-aś) się z powodu depresji lub innego zaburzenia psychicznego?",
+    mentalNo: "Nie",
+    mentalPast: "Tak, w przeszłości",
+    mentalCurrent: "Tak, obecnie",
+    mentalSupport: "Jeśli przechodzisz trudny okres, rozmowa z lekarzem lub zaufaną osobą może pomóc. Telefon wsparcia emocjonalnego dla dorosłych: 116 123, Centrum Wsparcia (całodobowo): 800 70 2222, w nagłych sytuacjach: 112.",
+    qDiet: "Sposób odżywiania",
+    dietMode: "Zaznacz, co dotyczy Cię w większość tygodni",
+    dietFill: "Wypełnię listę",
+    dietItems: [
+      "Warzywa codziennie",
+      "Owoce codziennie",
+      "Rośliny strączkowe (fasola, soczewica, groch) co najmniej 2 razy w tygodniu",
+      "Ryby co najmniej 2 razy w tygodniu",
+      "Głównie pełnoziarniste pieczywo, makarony lub kasze",
+      "Orzechy lub nasiona co najmniej 3 razy w tygodniu",
+      "Oliwa lub olej rzepakowy jako główny tłuszcz",
+      "Czerwone mięso lub wędliny najwyżej kilka razy w tygodniu",
+      "Słodycze i słodzone napoje rzadko",
+    ],
+    qIncome: "Dochód gospodarstwa domowego w porównaniu ze średnią w kraju",
+    incMuchLower: "Znacznie niższy",
+    incLower: "Nieco niższy",
+    incAverage: "Mniej więcej średni",
+    incHigher: "Nieco wyższy",
+    incMuchHigher: "Znacznie wyższy",
+    qSocial: "Sytuacja życiowa i kontakty",
+    qLivingAlone: "Czy mieszkasz sam(a)?",
+    qContact: "Jak często spotykasz się lub rozmawiasz z przyjaciółmi lub rodziną?",
+    contactDaily: "Codziennie",
+    contactWeekly: "Co tydzień",
+    contactMonthly: "Co miesiąc",
+    contactRarely: "Rzadziej",
+    qLonely: "Jak często czujesz się samotny(-a)?",
+    lonelyNever: "Nigdy lub rzadko",
+    lonelySometimes: "Czasami",
+    lonelyOften: "Często",
+    qSitting: "Godziny siedzenia dziennie (praca, telewizja, dojazdy)",
+    sitLt4: "Mniej niż 4",
+    sit4to6: "4–6",
+    sit6to8: "6–8",
+    sitGt8: "Ponad 8",
+    qSleep: "Zwykle sypiasz",
+    sleepLe5: "5 godzin lub mniej",
+    sleepSix: "Około 6 godzin",
+    sleepSevenEight: "7–8 godzin",
+    sleepNinePlus: "9 godzin lub więcej",
+    qEducation: "Najwyższe ukończone wykształcenie",
+    eduPrimary: "Podstawowe",
+    eduVocational: "Zasadnicze zawodowe",
+    eduSecondary: "Średnie",
+    eduBachelor: "Licencjat lub inżynier",
+    eduMaster: "Magister lub wyższe",
+    qAir: "Gdzie mieszkasz?",
+    airCity: "Duże miasto",
+    airTown: "Mniejsze miasto",
+    airCountryside: "Wieś",
     // With one decimal place Polish uses the genitive singular: "2,5 roku".
     yearsDecimal: () => "roku",
     surveyEffect: (v) => `Ankieta: ${v} roku względem średniej krajowej`,
@@ -187,6 +347,8 @@ const state = {
   lang: "en",
   countries: [],      // from countries.php
   entries: null,      // { country, birthDate, sex }
+  birthMin: "",       // allowed birth dates (YYYY-MM-DD), set in init()
+  birthMax: "",
   timeline: null,     // [{ t: ms, rem: seconds }]
   dataYear: null,
   refetching: false,
@@ -315,12 +477,17 @@ function setLanguage(lang) {
   document.documentElement.lang = state.lang;
   document.title = t("title");
   document.querySelectorAll("[data-i18n]").forEach((el) => { el.textContent = t(el.dataset.i18n); });
+  document.querySelectorAll("[data-i18n-item]").forEach((el) => {
+    const [key, i] = el.dataset.i18nItem.split(".");
+    el.textContent = t(key)[Number(i)];
+  });
   document.querySelectorAll(".lang button").forEach((b) => {
     const active = b.dataset.lang === state.lang;
     b.classList.toggle("active", active);
     b.setAttribute("aria-pressed", String(active));
   });
   renderCountryOptions();
+  renderMonthOptions();
   updateBmi();
   if (state.entries && state.timeline) {
     renderDetails();
@@ -498,7 +665,9 @@ function renderSurveySummary() {
   $("open-survey").textContent = t(state.survey ? "surveyEdit" : "surveyButton");
   $("survey-hint").hidden = !!r;
   $("survey-effect").hidden = $("survey-range").hidden = $("survey-breakdown").hidden = !r;
-  $("approx-note").hidden = !(r && r.riskModel.approximate && r.riskModel.approximate.length);
+  const usedApprox = r ? Risk.usedPrevalence(r.riskModel, state.survey, riskSex(state.entries.sex))
+    .filter((k) => (r.riskModel.approximate || []).includes(k)) : [];
+  $("approx-note").hidden = !usedApprox.length;
   if (!r) return;
 
   const sex = riskSex(state.entries.sex);
@@ -539,15 +708,57 @@ function stopTimer() {
 }
 
 // ------------------------------------------------------------
+// Birth date: day / month / year fields in the page language.
+// Internally the date is always YYYY-MM-DD.
+// ------------------------------------------------------------
+
+function renderMonthOptions() {
+  const select = $("birthMonth");
+  const selected = select.value;
+  const fmt = new Intl.DateTimeFormat(state.lang, { month: "long" });
+  select.replaceChildren(new Option(t("chooseMonth"), ""));
+  for (let m = 1; m <= 12; m++) {
+    const name = fmt.format(new Date(2000, m - 1, 1));
+    select.add(new Option(name.charAt(0).toUpperCase() + name.slice(1), String(m)));
+  }
+  select.value = selected;
+}
+
+/** "" when all parts are empty, null when invalid, otherwise YYYY-MM-DD. */
+function getBirthDate() {
+  const d = $("birthDay").value.trim(), m = $("birthMonth").value, y = $("birthYear").value.trim();
+  if (!d && !m && !y) return "";
+  if (!/^\d{1,2}$/.test(d) || !m || !/^\d{4}$/.test(y)) return null;
+  const day = Number(d), month = Number(m), year = Number(y);
+  const date = new Date(year, month - 1, day);
+  // Rejects dates that do not exist, e.g. 31 February.
+  if (date.getFullYear() !== year || date.getMonth() !== month - 1 || date.getDate() !== day) return null;
+  return isoDate(date);
+}
+
+function setBirthDate(iso) {
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso || "");
+  $("birthDay").value = m ? String(Number(m[3])) : "";
+  $("birthMonth").value = m ? String(Number(m[2])) : "";
+  $("birthYear").value = m ? m[1] : "";
+}
+
+function markBirthInvalid(bad) {
+  ["birthDay", "birthMonth", "birthYear"].forEach((id) => $(id).setAttribute("aria-invalid", String(bad)));
+}
+
+// ------------------------------------------------------------
 // Form
 // ------------------------------------------------------------
 
 function readForm() {
   const country = $("country").value;
-  const birthDate = $("birthDate").value;
+  const birthDate = getBirthDate();
   const sex = (document.querySelector('input[name="sex"]:checked') || {}).value || "";
+  markBirthInvalid(false);
   if (!country) return { error: t("errCountry") };
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(birthDate) || birthDate > $("birthDate").max || birthDate < $("birthDate").min) {
+  if (!birthDate || birthDate > state.birthMax || birthDate < state.birthMin) {
+    markBirthInvalid(true);
     return { error: t("errBirthDate") };
   }
   return { entries: { country, birthDate, sex } };
@@ -556,7 +767,7 @@ function readForm() {
 function fillForm(e) {
   if (!e) return;
   $("country").value = e.country || "";
-  $("birthDate").value = e.birthDate || "";
+  setBirthDate(e.birthDate);
   const radio = document.querySelector(`input[name="sex"][value="${e.sex || ""}"]`);
   if (radio) radio.checked = true;
 }
@@ -651,12 +862,143 @@ function readSurvey() {
     parents[who] = { status, age };
   }
   if (Object.keys(parents).length) answers.parents = parents;
+  readExtended(answers);
 
   if (invalid.length) {
     $(invalid[0]).focus();
     return { error: t("errSurvey") };
   }
   return { answers: Object.keys(answers).length ? answers : null };
+}
+
+// Extended questions. Order comes from the factor table (riskModel.extendedOrder):
+// largest possible effect first.
+const EXTENDED = {
+  stroke: { kind: "yesno", q: "qStroke" },
+  heartAttack: { kind: "yesno", q: "qHeartAttack" },
+  diabetes: { kind: "yesno", q: "qDiabetes" },
+  bloodPressure: { kind: "select", q: "qBloodPressure", skip: "dontKnow",
+    options: [["normal", "bpNormal"], ["controlled", "bpControlled"], ["uncontrolled", "bpUncontrolled"], ["untreated", "bpUntreated"]] },
+  mental: { kind: "select", q: "qMental", sensitive: true,
+    options: [["no", "mentalNo"], ["past", "mentalPast"], ["current", "mentalCurrent"]] },
+  diet: { kind: "diet", q: "qDiet" },
+  income: { kind: "select", q: "qIncome",
+    options: [["muchLower", "incMuchLower"], ["lower", "incLower"], ["average", "incAverage"], ["higher", "incHigher"], ["muchHigher", "incMuchHigher"]] },
+  social: { kind: "social", q: "qSocial" },
+  sitting: { kind: "select", q: "qSitting",
+    options: [["lt4", "sitLt4"], ["4to6", "sit4to6"], ["6to8", "sit6to8"], ["gt8", "sitGt8"]] },
+  sleep: { kind: "select", q: "qSleep",
+    options: [["le5", "sleepLe5"], ["six", "sleepSix"], ["sevenEight", "sleepSevenEight"], ["ninePlus", "sleepNinePlus"]] },
+  education: { kind: "select", q: "qEducation",
+    options: [["primary", "eduPrimary"], ["vocational", "eduVocational"], ["secondary", "eduSecondary"], ["bachelor", "eduBachelor"], ["master", "eduMaster"]] },
+  air: { kind: "select", q: "qAir", options: [["city", "airCity"], ["town", "airTown"], ["countryside", "airCountryside"]] },
+};
+const SOCIAL_PARTS = {
+  livingAlone: ["qLivingAlone", [["yes", "yes"], ["no", "no"]]],
+  contact: ["qContact", [["daily", "contactDaily"], ["weekly", "contactWeekly"], ["monthly", "contactMonthly"], ["rarely", "contactRarely"]]],
+  lonely: ["qLonely", [["never", "lonelyNever"], ["sometimes", "lonelySometimes"], ["often", "lonelyOften"]]],
+};
+const DEFAULT_EXTENDED_ORDER = Object.keys(EXTENDED);
+
+function el(tag, attrs = {}, children = []) {
+  const e = document.createElement(tag);
+  for (const k in attrs) {
+    if (k === "i18n") e.dataset.i18n = attrs[k];
+    else if (k === "i18nItem") e.dataset.i18nItem = attrs[k];
+    else e.setAttribute(k, attrs[k]);
+  }
+  children.forEach((c) => e.append(c));
+  return e;
+}
+
+function makeSelect(id, options, skipKey = "preferNot") {
+  const sel = el("select", { id });
+  sel.append(el("option", { value: "", i18n: skipKey }));
+  options.forEach(([value, key]) => sel.append(el("option", { value, i18n: key })));
+  return sel;
+}
+
+/** Build the extended questions once, in the order given by the factor table. */
+function renderExtendedQuestions(order) {
+  const box = $("extended-questions");
+  const key = order.join(",");
+  if (box.dataset.order === key) return;
+  box.dataset.order = key;
+  box.replaceChildren();
+  for (const name of order) {
+    const q = EXTENDED[name];
+    if (!q) continue;
+    const wrap = el("div", { class: "xq", id: `xq-${name}` });
+    if (q.sensitive) wrap.append(el("p", { class: "reminder", i18n: "sectionReminder" }));
+    if (q.kind === "yesno" || q.kind === "select") {
+      const opts = q.kind === "yesno" ? [["yes", "yes"], ["no", "no"]] : q.options;
+      wrap.append(el("label", { class: "sel" }, [el("span", { i18n: q.q }), makeSelect(`x-${name}`, opts, q.skip)]));
+    } else if (q.kind === "diet") {
+      wrap.append(el("label", { class: "sel" }, [el("span", { i18n: q.q }),
+        makeSelect("x-diet-mode", [["fill", "dietFill"]])]));
+      const checks = el("div", { class: "checks", id: "x-diet-items", hidden: "" }, [el("p", { class: "hint", i18n: "dietMode" })]);
+      for (let i = 0; i < 9; i++) {
+        checks.append(el("label", {}, [el("input", { type: "checkbox", id: `x-diet-${i}` }), el("span", { i18nItem: `dietItems.${i}` })]));
+      }
+      wrap.append(checks);
+    } else if (q.kind === "social") {
+      const sub = el("div", { class: "sub" });
+      for (const part in SOCIAL_PARTS) {
+        const [qKey, opts] = SOCIAL_PARTS[part];
+        sub.append(el("label", { class: "sel" }, [el("span", { i18n: qKey }), makeSelect(`x-social-${part}`, opts)]));
+      }
+      wrap.append(el("p", { class: "q-title", i18n: q.q }), sub);
+    }
+    if (q.sensitive) wrap.append(el("p", { class: "support", i18n: "mentalSupport" }));
+    box.append(wrap);
+  }
+  $("x-diet-mode").addEventListener("change", () => { $("x-diet-items").hidden = $("x-diet-mode").value !== "fill"; });
+  setLanguage(state.lang); // translate the new elements
+}
+
+function readExtended(answers) {
+  for (const name in EXTENDED) {
+    const q = EXTENDED[name];
+    if (q.kind === "yesno") {
+      const v = $(`x-${name}`).value;
+      if (v) answers[name] = { value: v };
+    } else if (q.kind === "select") {
+      const v = $(`x-${name}`).value;
+      if (v) answers[name] = { level: v };
+    } else if (q.kind === "diet") {
+      if ($("x-diet-mode").value === "fill") {
+        const items = [];
+        for (let i = 0; i < 9; i++) if ($(`x-diet-${i}`).checked) items.push(i);
+        answers.diet = { score: items.length, items };
+      }
+    } else if (q.kind === "social") {
+      const a = {};
+      for (const part in SOCIAL_PARTS) {
+        const v = $(`x-social-${part}`).value;
+        if (v) a[part] = v;
+      }
+      if (Object.keys(a).length) answers.social = a;
+    }
+  }
+}
+
+function fillExtended(a) {
+  let any = false;
+  for (const name in EXTENDED) {
+    const q = EXTENDED[name], v = a[name];
+    if (v) any = true;
+    if (q.kind === "yesno") $(`x-${name}`).value = (v && v.value) || "";
+    else if (q.kind === "select") $(`x-${name}`).value = (v && v.level) || "";
+    else if (q.kind === "diet") {
+      $("x-diet-mode").value = v ? "fill" : "";
+      $("x-diet-items").hidden = !v;
+      // Only the score is stored, so tick the first `score` items.
+      for (let i = 0; i < 9; i++) $(`x-diet-${i}`).checked = !!(v && v.items ? v.items.includes(i) : v && i < v.score);
+    } else if (q.kind === "social") {
+      for (const part in SOCIAL_PARTS) $(`x-social-${part}`).value = (v && v[part]) || "";
+    }
+  }
+  $("survey-more").open = any;
 }
 
 function fillSurvey(a) {
@@ -672,13 +1014,20 @@ function fillSurvey(a) {
     $(who + "Status").value = (p && p.status) || "";
     $(who + "Age").value = (p && p.age) || "";
   }
+  fillExtended(a);
   $("remember").checked = state.remember;
   ["quitAge", "heightCm", "weightKg", "motherAge", "fatherAge"].forEach((id) => $(id).removeAttribute("aria-invalid"));
   updateBmi();
 }
 
-function openSurvey() {
+async function openSurvey() {
   stopTimer();
+  let order = DEFAULT_EXTENDED_ORDER;
+  try {
+    const rm = await getRiskModel(state.entries.country, state.entries.sex);
+    if (Array.isArray(rm.extendedOrder)) order = rm.extendedOrder;
+  } catch (e) { /* offline: default order */ }
+  renderExtendedQuestions(order);
   fillSurvey(state.survey);
   showError($("survey-error"), "");
   $("timer-panel").hidden = true;
@@ -727,8 +1076,8 @@ async function init() {
   const today = new Date();
   const min = new Date(today);
   min.setFullYear(today.getFullYear() - 120);
-  $("birthDate").max = isoDate(today);
-  $("birthDate").min = isoDate(min);
+  state.birthMax = isoDate(today);
+  state.birthMin = isoDate(min);
 
   $("country").disabled = true;
   // A language picked with the switch wins; otherwise follow the browser.

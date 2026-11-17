@@ -322,6 +322,10 @@ overweight,NCD_BMI_25A
 insufficient_activity,NCD_PAA
 alcohol_litres,SA_0000001688
 alcohol_abstainers,SA_0000001411
+diabetes,NCD_GLUC_04
+hypertension,NCD_HYP_PREVALENCE_A
+hypertension_controlled,NCD_HYP_CONTROL_A
+pm25,SDGPM25
 EOF
 
     while IFS=, read -r VARIABLE CODE

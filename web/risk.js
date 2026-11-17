@@ -128,6 +128,115 @@
   };
 
   // ------------------------------------------------------------
+  // Extended survey: generic factor types, selected by "type" in the
+  // factor table. Same contract: { hr, mean } or null when skipped.
+  // ------------------------------------------------------------
+
+  /** Population shares for a "levels" factor (from prevalence or assumed). */
+  function levelShares(f, model) {
+    const shares = {};
+    let used = 0;
+    if (f.shareKeys) {
+      for (const lvl in f.shareKeys) {
+        shares[lvl] = prevalenceValue(model, f.shareKeys[lvl]) || 0;
+        used += shares[lvl];
+      }
+    } else if (f.assumedShares) {
+      Object.assign(shares, f.assumedShares);
+      return shares;
+    }
+    const rest = Object.keys(f.levels).filter((l) => !(l in shares));
+    rest.forEach((l) => { shares[l] = Math.max(0, 1 - used) / rest.length; });
+    return shares;
+  }
+
+  function meanOf(levels, shares, transform = (x) => x) {
+    let m = 0;
+    for (const l in shares) m += shares[l] * transform(levels[l]);
+    return m;
+  }
+
+  const TYPES = {
+    binary(ans, f, sex, model) {
+      if (!ans || (ans.value !== "yes" && ans.value !== "no")) return null;
+      const p = prevalenceValue(model, f.prevalenceKey);
+      return { hr: ans.value === "yes" ? f.hrYes : 1, mean: p * f.hrYes + (1 - p) };
+    },
+
+    bloodPressure(ans, f, sex, model) {
+      if (!ans || !(ans.level in f.levels)) return null;
+      const L = f.levels, s = f.assumedUncontrolledSplit;
+      const p = prevalenceValue(model, "hypertension");
+      const c = prevalenceValue(model, "hypertension_controlled");
+      const meanHyp = c * L.controlled + (1 - c) * (s.uncontrolled * L.uncontrolled + s.untreated * L.untreated);
+      return { hr: L[ans.level], mean: (1 - p) * L.normal + p * meanHyp };
+    },
+
+    levels(ans, f, sex, model) {
+      if (!ans || !(ans.level in f.levels)) return null;
+      return { hr: f.levels[ans.level], mean: meanOf(f.levels, levelShares(f, model)) };
+    },
+
+    diet(ans, f) {
+      if (!ans || !(ans.score >= 0 && ans.score <= f.items)) return null;
+      // Relative to the average score, so mean = 1.
+      return { hr: Math.pow(f.hrPer2Points, (ans.score - f.populationMeanScore) / 2), mean: 1 };
+    },
+
+    social(ans, f, sex, model) {
+      if (!ans) return null;
+      const parts = [];   // [ln hr, ln mean] per answered sub-question
+      if (ans.livingAlone in f.livingAlone) {
+        const p = prevalenceValue(model, "living_alone");
+        parts.push([Math.log(f.livingAlone[ans.livingAlone]), Math.log(p * f.livingAlone.yes + (1 - p))]);
+      }
+      if (ans.contact in f.contact) {
+        parts.push([Math.log(f.contact[ans.contact]), Math.log(meanOf(f.contact, f.assumedShares.contact))]);
+      }
+      if (ans.lonely in f.lonely) {
+        parts.push([Math.log(f.lonely[ans.lonely]), Math.log(meanOf(f.lonely, f.assumedShares.lonely))]);
+      }
+      if (!parts.length) return null;
+      // The three overlap: the largest counts fully, the others only partly.
+      const stack = (xs) => {
+        const sorted = xs.slice().sort((a, b) => b - a);
+        return sorted[0] + f.othersFraction * sorted.slice(1).reduce((a, b) => a + b, 0);
+      };
+      return { hr: Math.exp(stack(parts.map((x) => x[0]))), mean: Math.exp(stack(parts.map((x) => x[1]))) };
+    },
+
+    sitting(ans, f, sex, model, answers) {
+      if (!ans || !(ans.level in f.levels)) return null;
+      // Enough activity removes the risk of long sitting (Ekelund 2016).
+      const act = answers && answers.activity && answers.activity.level;
+      const scale = act in f.activityScale ? f.activityScale[act] : 1;
+      const pow = (x) => Math.pow(x, scale);
+      return { hr: pow(f.levels[ans.level]), mean: meanOf(f.levels, f.assumedShares, pow) };
+    },
+
+    education(ans, f, sex, model) {
+      if (!ans || !(ans.level in f.years)) return null;
+      const meanYears = prevalenceValue(model, "mean_school_years");
+      return { hr: Math.pow(1 - f.reductionPerYear, f.years[ans.level] - meanYears), mean: 1 };
+    },
+
+    air(ans, f, sex, model) {
+      if (!ans || !(ans.level in f.areaKey)) return null;
+      const pm = prevalenceValue(model, f.areaKey[ans.level]);
+      const total = prevalenceValue(model, "pm25_total");
+      if (pm === null || total === null) return null;
+      return { hr: Math.pow(f.rrPer10, (pm - total) / 10), mean: 1 };
+    },
+  };
+
+  function evaluate(name, riskModel, answers, sex) {
+    const f = riskModel.factors[name];
+    const fn = FACTORS[name] || TYPES[f.type];
+    if (!fn) return null;
+    return fn(answers ? answers[name] : null, f, sex, riskModel, answers);
+  }
+
+  // ------------------------------------------------------------
   // Combination
   // ------------------------------------------------------------
 
@@ -137,10 +246,8 @@
    */
   function factorEffects(riskModel, answers, sex) {
     const out = {};
-    for (const name in FACTORS) {
-      const f = riskModel.factors[name];
-      if (!f) continue;
-      const r = FACTORS[name](answers ? answers[name] : null, f, sex, riskModel);
+    for (const name in riskModel.factors) {
+      const r = evaluate(name, riskModel, answers, sex);
       if (!r || !(r.hr > 0) || !(r.mean > 0)) continue;
       out[name] = { lnR: Math.log(r.hr / r.mean), hr: r.hr, mean: r.mean };
     }
@@ -247,7 +354,16 @@
     return [Math.min(...ys), Math.max(...ys)];
   }
 
-  const Risk = { multipliers, factorEffects, combine, remainingYears, breakdown, range, interpolate };
+  /** National-average keys the answered factors rely on (for the "approximate" note). */
+  function usedPrevalence(riskModel, answers, sex) {
+    const keys = new Set();
+    for (const name in factorEffects(riskModel, answers, sex)) {
+      (riskModel.factors[name].prevalenceKeys || []).forEach((k) => keys.add(k));
+    }
+    return [...keys];
+  }
+
+  const Risk = { multipliers, factorEffects, combine, remainingYears, breakdown, range, interpolate, usedPrevalence };
 
   if (typeof module !== "undefined" && module.exports) module.exports = Risk;
   else root.Risk = Risk;

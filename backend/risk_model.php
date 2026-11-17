@@ -46,6 +46,8 @@ if (!is_array($factors) || !isset($factors['factors'], $factors['defaultPrevalen
 
 $prevalenceData = is_file(PREVALENCE_FILE) ? json_decode((string)file_get_contents(PREVALENCE_FILE), true) : null;
 $countryPrevalence = $prevalenceData['countries'][$countryCode][$sex] ?? [];
+// Values published only for both sexes (e.g. PM2.5) are used for men and women too.
+$countryPrevalence += $prevalenceData['countries'][$countryCode]['both'] ?? [];
 
 $defaults = $factors['defaultPrevalence'][$sex];
 $prevalence = [];

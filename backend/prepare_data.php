@@ -216,7 +216,27 @@ const PREVALENCE_VARIABLES = [
     'insufficient_activity' => true,
     'alcohol_litres'        => false,
     'alcohol_abstainers'    => true,
+    // Extended survey
+    'diabetes'                => true,  // raised fasting blood glucose, age-standardized
+    'hypertension'            => true,  // adults 30-79, age-standardized
+    'hypertension_controlled' => true,  // share of people with hypertension who have it controlled
+    'pm25'                    => false, // µg/m³, split by residence area into pm25_urban/_rural/_total
 ];
+
+/** PM2.5 is split by residence area (urban / rural / total) instead of sex. */
+function prevalence_area_variable(array $r): ?string
+{
+    foreach (['Dim1', 'Dim2', 'Dim3'] as $d) {
+        if (($r[$d . 'Type'] ?? null) === 'RESIDENCEAREATYPE') {
+            $v = (string)($r[$d] ?? '');
+            if (preg_match('/URB/i', $v)) return 'pm25_urban';
+            if (preg_match('/RUR/i', $v)) return 'pm25_rural';
+            if (preg_match('/TOT/i', $v)) return 'pm25_total';
+            return null;
+        }
+    }
+    return 'pm25_total';
+}
 
 $prevDir = __DIR__ . '/life_expectancy_data/who/prevalence';
 $prevOutput = dirname($output) . '/prevalence.json';
@@ -235,6 +255,9 @@ function prevalence_record_sex(array $r): array
         if ($type === null || $value === null) {
             continue;
         }
+        if ($type === 'RESIDENCEAREATYPE') {
+            continue; // handled by prevalence_area_variable()
+        }
         if ($type === 'SEX') {
             $sex = mortality_normalize_sex($value);
             if ($sex === null) {
@@ -243,7 +266,7 @@ function prevalence_record_sex(array $r): array
             continue;
         }
         // Any other dimension: accept only totals / adult "plus" groups.
-        if (!preg_match('/TOTAL|ALL|PLUS|BTSX|18\+|15\+/i', (string)$value)) {
+        if (!preg_match('/TOTAL|ALL|PLUS|BTSX|18\+|15\+|30-79/i', (string)$value)) {
             return [null, false];
         }
     }
@@ -281,14 +304,20 @@ foreach (PREVALENCE_VARIABLES as $variable => $isPercent) {
         if ($isPercent) {
             $value /= 100;
         }
-        if (!isset($best[$country][$sex]) || $year > $best[$country][$sex][0]) {
-            $best[$country][$sex] = [$year, $value];
+        $name = $variable === 'pm25' ? prevalence_area_variable($r) : $variable;
+        if ($name === null) {
+            continue;
+        }
+        if (!isset($best[$country][$sex][$name]) || $year > $best[$country][$sex][$name][0]) {
+            $best[$country][$sex][$name] = [$year, $value];
         }
         $usedCount++;
     }
     foreach ($best as $country => $bySex) {
-        foreach ($bySex as $sex => [$year, $value]) {
-            $prevalence[$country][$sex][$variable] = ['value' => round($value, 4), 'year' => $year];
+        foreach ($bySex as $sex => $byName) {
+            foreach ($byName as $name => [$year, $value]) {
+                $prevalence[$country][$sex][$name] = ['value' => round($value, 4), 'year' => $year];
+            }
         }
     }
     $prevStats[$variable] = sprintf('%d records used, %d countries', $usedCount, count($best));

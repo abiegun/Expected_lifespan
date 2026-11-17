@@ -1,5 +1,5 @@
 {
-  "version": "2026-11-17.1",
+  "version": "2026-11-17.2",
   "description": "Survey risk factors. Public data: effect sizes and rules only. Answers are evaluated on the user's device (web/risk.js, Android port); only hr65/hr85 are sent to the backend. See project doc claude/survey-risk-factors.md.",
   "ageProfile": {
     "fullUntil": 65,
@@ -16,7 +16,9 @@
   ],
   "groupWeights": {
     "lifestyle": 1.0,
-    "proxy": 0.5
+    "proxy": 0.5,
+    "medical": 1.0,
+    "environment": 1.0
   },
   "factors": {
     "smoking": {
@@ -59,6 +61,9 @@
         "Jha 2013 NEJM",
         "Pirie 2013 Lancet",
         "Doll 2004 BMJ"
+      ],
+      "prevalenceKeys": [
+        "smoking_current"
       ]
     },
     "bmi": {
@@ -77,6 +82,10 @@
       },
       "sources": [
         "Prospective Studies Collaboration 2009 Lancet"
+      ],
+      "prevalenceKeys": [
+        "overweight",
+        "obesity"
       ]
     },
     "activity": {
@@ -103,6 +112,9 @@
       "sources": [
         "Arem 2015 JAMA Intern Med",
         "Moore 2012 PLoS Med"
+      ],
+      "prevalenceKeys": [
+        "insufficient_activity"
       ]
     },
     "alcohol": {
@@ -123,6 +135,10 @@
       "gramsPerLitre": 789,
       "sources": [
         "Wood 2018 Lancet"
+      ],
+      "prevalenceKeys": [
+        "alcohol_litres",
+        "alcohol_abstainers"
       ]
     },
     "parents": {
@@ -136,6 +152,261 @@
       "minAgeCounted": 70,
       "sources": [
         "Atkins, Pilling 2016 JACC"
+      ],
+      "prevalenceKeys": []
+    },
+    "stroke": {
+      "type": "binary",
+      "group": "medical",
+      "oldRatio": 0.9,
+      "hrYes": 2.1,
+      "prevalenceKey": "stroke_history",
+      "prevalenceKeys": [
+        "stroke_history"
+      ],
+      "sources": [
+        "Emerging Risk Factors Collaboration 2015 JAMA"
+      ],
+      "note": "Published HRs kept; the model gives ~1.5-2.5 years less than ERFC life-year estimates (different age handling)."
+    },
+    "heartAttack": {
+      "type": "binary",
+      "group": "medical",
+      "oldRatio": 0.9,
+      "hrYes": 2.0,
+      "prevalenceKey": "mi_history",
+      "prevalenceKeys": [
+        "mi_history"
+      ],
+      "sources": [
+        "Emerging Risk Factors Collaboration 2015 JAMA"
+      ],
+      "note": "Published HRs kept; the model gives ~1.5-2.5 years less than ERFC life-year estimates (different age handling)."
+    },
+    "diabetes": {
+      "type": "binary",
+      "group": "medical",
+      "oldRatio": 0.9,
+      "hrYes": 1.9,
+      "prevalenceKey": "diabetes",
+      "prevalenceKeys": [
+        "diabetes"
+      ],
+      "sources": [
+        "Emerging Risk Factors Collaboration 2015 JAMA"
+      ],
+      "note": "Published HRs kept; the model gives ~1.5-2.5 years less than ERFC life-year estimates (different age handling)."
+    },
+    "bloodPressure": {
+      "type": "bloodPressure",
+      "group": "medical",
+      "oldRatio": 0.6,
+      "levels": {
+        "normal": 1.0,
+        "controlled": 1.05,
+        "uncontrolled": 1.62,
+        "untreated": 1.5
+      },
+      "assumedUncontrolledSplit": {
+        "uncontrolled": 0.45,
+        "untreated": 0.55
+      },
+      "prevalenceKeys": [
+        "hypertension",
+        "hypertension_controlled"
+      ],
+      "note": "untreated 1.5 is an approximation; controlled ~ normal",
+      "sources": [
+        "Zhou 2018 Sci Rep (NHANES III)"
+      ]
+    },
+    "mental": {
+      "type": "levels",
+      "group": "medical",
+      "oldRatio": 0.6,
+      "sensitive": true,
+      "levels": {
+        "no": 1.0,
+        "past": 1.2,
+        "current": 1.5
+      },
+      "shareKeys": {
+        "past": "mental_past",
+        "current": "mental_current"
+      },
+      "prevalenceKeys": [
+        "mental_past",
+        "mental_current"
+      ],
+      "note": "Reduced from RR 2.22 (all diagnosed disorders incl. severe) by decision 2026-11-17",
+      "sources": [
+        "Walker, McGee, Druss 2015 JAMA Psychiatry"
+      ]
+    },
+    "diet": {
+      "type": "diet",
+      "group": "proxy",
+      "oldRatio": 0.6,
+      "hrPer2Points": 0.9,
+      "items": 9,
+      "populationMeanScore": 4.5,
+      "prevalenceKeys": [],
+      "sources": [
+        "Soltani 2019 Adv Nutr"
+      ]
+    },
+    "income": {
+      "type": "levels",
+      "group": "proxy",
+      "oldRatio": 0.6,
+      "levels": {
+        "muchLower": 1.3,
+        "lower": 1.12,
+        "average": 1.0,
+        "higher": 0.92,
+        "muchHigher": 0.85
+      },
+      "assumedShares": {
+        "muchLower": 0.15,
+        "lower": 0.2,
+        "average": 0.3,
+        "higher": 0.2,
+        "muchHigher": 0.15
+      },
+      "prevalenceKeys": [],
+      "note": "Small effect by design: the only large source is US data (Chetty 2016); European gradients are smaller.",
+      "sources": [
+        "Chetty 2016 JAMA"
+      ]
+    },
+    "social": {
+      "type": "social",
+      "group": "proxy",
+      "oldRatio": 0.6,
+      "livingAlone": {
+        "yes": 1.32,
+        "no": 1.0
+      },
+      "contact": {
+        "daily": 1.0,
+        "weekly": 1.05,
+        "monthly": 1.15,
+        "rarely": 1.29
+      },
+      "lonely": {
+        "never": 1.0,
+        "sometimes": 1.1,
+        "often": 1.26
+      },
+      "othersFraction": 0.3,
+      "assumedShares": {
+        "contact": {
+          "daily": 0.4,
+          "weekly": 0.4,
+          "monthly": 0.12,
+          "rarely": 0.08
+        },
+        "lonely": {
+          "never": 0.6,
+          "sometimes": 0.3,
+          "often": 0.1
+        }
+      },
+      "prevalenceKeys": [
+        "living_alone"
+      ],
+      "sources": [
+        "Holt-Lunstad 2015 Perspect Psychol Sci"
+      ]
+    },
+    "sitting": {
+      "type": "sitting",
+      "group": "lifestyle",
+      "oldRatio": 0.6,
+      "levels": {
+        "lt4": 1.0,
+        "4to6": 1.02,
+        "6to8": 1.07,
+        "gt8": 1.15
+      },
+      "activityScale": {
+        "none": 1.0,
+        "low": 1.0,
+        "guideline": 0.6,
+        "double": 0.3,
+        "high": 0.0
+      },
+      "assumedShares": {
+        "lt4": 0.2,
+        "4to6": 0.35,
+        "6to8": 0.25,
+        "gt8": 0.2
+      },
+      "prevalenceKeys": [],
+      "note": "Approximate grid; 60-75 min/day of activity removes the sitting risk (Ekelund).",
+      "sources": [
+        "Ekelund 2016 Lancet"
+      ]
+    },
+    "sleep": {
+      "type": "levels",
+      "group": "lifestyle",
+      "oldRatio": 0.6,
+      "levels": {
+        "le5": 1.12,
+        "six": 1.06,
+        "sevenEight": 1.0,
+        "ninePlus": 1.14
+      },
+      "assumedShares": {
+        "le5": 0.1,
+        "six": 0.25,
+        "sevenEight": 0.55,
+        "ninePlus": 0.1
+      },
+      "prevalenceKeys": [],
+      "note": "Long sleep (RR 1.30) applied at half strength: often a sign of illness.",
+      "sources": [
+        "Cappuccio 2010 Sleep"
+      ]
+    },
+    "education": {
+      "type": "education",
+      "group": "proxy",
+      "oldRatio": 0.4,
+      "reductionPerYear": 0.019,
+      "years": {
+        "primary": 8,
+        "vocational": 11,
+        "secondary": 12,
+        "bachelor": 15,
+        "master": 17
+      },
+      "prevalenceKeys": [
+        "mean_school_years"
+      ],
+      "sources": [
+        "IHME-CHAIN (Balaj) 2024 Lancet Public Health"
+      ]
+    },
+    "air": {
+      "type": "air",
+      "group": "environment",
+      "oldRatio": 0.8,
+      "rrPer10": 1.08,
+      "areaKey": {
+        "city": "pm25_urban",
+        "town": "pm25_total",
+        "countryside": "pm25_rural"
+      },
+      "prevalenceKeys": [
+        "pm25_urban",
+        "pm25_total",
+        "pm25_rural"
+      ],
+      "sources": [
+        "Chen & Hoek 2020 Environ Int (RR 1.08 per 10 µg/m³)",
+        "Air Quality Life Index (EPIC)"
       ]
     }
   },
@@ -147,7 +418,19 @@
       "obesity": 0.24,
       "insufficient_activity": 0.3,
       "alcohol_litres": 15.0,
-      "alcohol_abstainers": 0.15
+      "alcohol_abstainers": 0.15,
+      "stroke_history": 0.025,
+      "mi_history": 0.035,
+      "diabetes": 0.09,
+      "hypertension": 0.4,
+      "hypertension_controlled": 0.25,
+      "mental_past": 0.1,
+      "mental_current": 0.06,
+      "living_alone": 0.15,
+      "pm25_total": 13.0,
+      "pm25_urban": 15.0,
+      "pm25_rural": 11.0,
+      "mean_school_years": 12.0
     },
     "female": {
       "smoking_current": 0.2,
@@ -155,7 +438,19 @@
       "obesity": 0.23,
       "insufficient_activity": 0.38,
       "alcohol_litres": 5.0,
-      "alcohol_abstainers": 0.3
+      "alcohol_abstainers": 0.3,
+      "stroke_history": 0.02,
+      "mi_history": 0.015,
+      "diabetes": 0.07,
+      "hypertension": 0.32,
+      "hypertension_controlled": 0.32,
+      "mental_past": 0.15,
+      "mental_current": 0.09,
+      "living_alone": 0.17,
+      "pm25_total": 13.0,
+      "pm25_urban": 15.0,
+      "pm25_rural": 11.0,
+      "mean_school_years": 12.3
     },
     "both": {
       "smoking_current": 0.24,
@@ -163,7 +458,40 @@
       "obesity": 0.235,
       "insufficient_activity": 0.34,
       "alcohol_litres": 9.8,
-      "alcohol_abstainers": 0.22
+      "alcohol_abstainers": 0.22,
+      "stroke_history": 0.0225,
+      "mi_history": 0.025,
+      "diabetes": 0.08,
+      "hypertension": 0.36,
+      "hypertension_controlled": 0.285,
+      "mental_past": 0.125,
+      "mental_current": 0.075,
+      "living_alone": 0.16,
+      "pm25_total": 13.0,
+      "pm25_urban": 15.0,
+      "pm25_rural": 11.0,
+      "mean_school_years": 12.15
     }
-  }
+  },
+  "shortSurvey": [
+    "smoking",
+    "bmi",
+    "activity",
+    "alcohol",
+    "parents"
+  ],
+  "extendedOrder": [
+    "stroke",
+    "heartAttack",
+    "diabetes",
+    "bloodPressure",
+    "mental",
+    "diet",
+    "income",
+    "social",
+    "sitting",
+    "sleep",
+    "education",
+    "air"
+  ]
 }
